@@ -98,6 +98,7 @@ import com.sk89q.worldedit.world.SimpleWorld;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BaseBiome;
 import com.sk89q.worldedit.world.registry.WorldData;
+
 import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -292,6 +293,7 @@ public class EditSession extends AbstractDelegateExtent implements HasFaweQueue,
                     changeSet.addChangeTask(queue);
                 } else {
                     this.extent = (history = new HistoryExtent(this, bypassHistory, changeSet, queue));
+
 //                    if (this.blockBag != null) {
 //                        this.extent = new BlockBagExtent(this.extent, blockBag, limit.INVENTORY_MODE == 1);
 //                    }
@@ -1615,6 +1617,7 @@ public class EditSession extends AbstractDelegateExtent implements HasFaweQueue,
      */
     @SuppressWarnings("deprecation")
     public int setBlocks(final Region region, final BaseBlock block) {
+        System.out.println("BLOCK: '" + block.getId() + ":" + block.getData() + " TYPE: " + block.getType() + "'");//TODO debug
         checkNotNull(region);
         checkNotNull(block);
         if (canBypassAll(region, false, true) && !block.hasNbtData()) {
@@ -1652,14 +1655,17 @@ public class EditSession extends AbstractDelegateExtent implements HasFaweQueue,
         checkNotNull(region);
         checkNotNull(pattern);
         if (pattern instanceof BlockPattern) {
+            System.out.println("CALLED line 1655");
             return setBlocks(region, ((BlockPattern) pattern).getBlock());
         }
         if (pattern instanceof BaseBlock) {
+            System.out.println("CALLED line 1659");
             return setBlocks(region, (BaseBlock) pattern);
         }
         final BlockReplace replace = new BlockReplace(EditSession.this, pattern);
         final RegionVisitor visitor = new RegionVisitor(region, replace, queue instanceof MappedFaweQueue ? (MappedFaweQueue) queue : null);
         Operations.completeBlindly(visitor);
+        System.out.println("CALLED line 1665");
         return this.changes = visitor.getAffected();
     }
 
@@ -3332,9 +3338,14 @@ public class EditSession extends AbstractDelegateExtent implements HasFaweQueue,
         for (int x = (int) pos1.getX(); x <= (int) pos2.getX(); x++) {
             for (int z = pos1.getBlockZ(); z <= pos2.getBlockZ(); z++) {
                 for (int y = (int) pos1.getY(); y <= (int) pos2.getY(); y++) {
+                    int fromId = queue.getLazyBlock(x, y, z).getId();
+                    if (fromId != 0) {
+                        System.out.println("EditSession#setExistingBlocks ID: " + fromId);//TODO debug
+                    }
                     int from = queue.getCombinedId4Data(x, y, z);
                     short id = (short) (from >> 4);
                     byte data = (byte) (from & 0xf);
+                    System.out.println("EditSession 3348 ID: " + id);
                     queue.setBlock(x, y, z, id, data);
                     if (FaweCache.hasNBT(id)) {
                         CompoundTag tile = queue.getTileEntity(x, y, z);
@@ -3443,6 +3454,7 @@ public class EditSession extends AbstractDelegateExtent implements HasFaweQueue,
                                 int from = queue.getCombinedId4Data(xx, y, zz);
                                 short id = (short) (from >> 4);
                                 byte data = (byte) (from & 0xf);
+                                System.out.println("Editsession 3456 ID: " + id);
                                 queue.setBlock(xx, y, zz, id, data);
                                 if (FaweCache.hasNBT(id)) {
                                     CompoundTag tile = queue.getTileEntity(xx, y, zz);

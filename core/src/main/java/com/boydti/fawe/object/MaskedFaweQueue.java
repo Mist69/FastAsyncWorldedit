@@ -57,6 +57,7 @@ public class MaskedFaweQueue extends DelegateFaweQueue {
     @Override
     public boolean setBlock(int x, int y, int z, int id, int data) {
         if (region.contains(x, y, z)) {
+            System.out.println("MaskedFaweQueue 60 ID: " + id);
             return super.setBlock(x, y, z, id, data);
         }
         return false;

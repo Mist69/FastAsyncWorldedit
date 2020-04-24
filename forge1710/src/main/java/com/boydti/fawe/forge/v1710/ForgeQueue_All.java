@@ -14,9 +14,16 @@ import com.boydti.fawe.object.visitor.FaweChunkVisitor;
 import com.boydti.fawe.util.MainUtil;
 import com.boydti.fawe.util.MathMan;
 import com.boydti.fawe.util.ReflectionUtils;
+import com.google.common.collect.Lists;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledByteBufAllocator;
@@ -55,6 +62,8 @@ import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.DimensionManager;
+
+import javax.annotation.Nullable;
 
 public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlockStorage[], ExtendedBlockStorage> {
 
@@ -328,6 +337,7 @@ public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlo
         }
     }
 
+
     public boolean hasEntities(Chunk nmsChunk) {
         for (int i = 0; i < nmsChunk.entityLists.length; i++) {
             List slice = nmsChunk.entityLists[i];
@@ -381,6 +391,7 @@ public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlo
                 }
             });
             packet.readPacketData(buffer);
+            System.out.println(packet.toString());
             for (int i = 0; i < players.length; i++) {
                 if (watchingArr[i]) ((EntityPlayerMP) ((ForgePlayer) players[i]).parent).playerNetServerHandler.sendPacket(packet);
             }
@@ -399,6 +410,7 @@ public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlo
         fieldNonEmptyBlockCount.set(section, nonEmptyBlockCount);
     }
 
+    // Undo method
     @Override
     public CharFaweChunk getPrevious(CharFaweChunk fs, ExtendedBlockStorage[] sections, Map<?, ?> tilesGeneric, Collection<?>[] entitiesGeneric, Set<UUID> createdEntities, boolean all) throws Exception {
         Map<ChunkPosition, TileEntity> tiles = (Map<ChunkPosition, TileEntity>) tilesGeneric;
@@ -416,8 +428,11 @@ public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlo
                         int y = FaweCache.CACHE_Y[layer][j];
                         int z = FaweCache.CACHE_Z[layer][j];
                         int id = currentIdArray[j] & 0xFF;
+                        if (id != 0) {
+                            System.out.println("ID OBJECT: " + id + " ORIGINAL: " + currentIdArray[j]);
+                        }//TODO debug
                         byte data = (byte) (currentDataArray != null ? currentDataArray.get(x, y & 15, z) : 0);
-                        previous.setBlock(x, y, z, id, data);
+                        previous.setBlock(x, y, z, id, data);//Air returns 0
                     }
                 }
             }
@@ -548,6 +563,7 @@ public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlo
         if (combined == 0) {
             return 0;
         }
+
         Block block = Block.getBlockById(FaweCache.getId(combined));
         return block.getLightValue();
     }
@@ -581,5 +597,32 @@ public class ForgeQueue_All extends NMSMappedFaweQueue<World, Chunk, ExtendedBlo
     @Override
     public File getSaveFolder() {
         return new File(((WorldServer) getWorld()).getChunkSaveLocation(), "region");
+    }
+
+    @Override
+    public List<? extends com.sk89q.worldedit.entity.Entity> getEntities(Region region) {
+        return null;
+    }
+
+    @Override
+    public List<? extends com.sk89q.worldedit.entity.Entity> getEntities() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public com.sk89q.worldedit.entity.Entity createEntity(Location location, BaseEntity entity) {
+        return null;
+    }
+
+    @Override
+    public BaseBlock getLazyBlock(Vector position) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Operation commit() {
+        return null;
     }
 }

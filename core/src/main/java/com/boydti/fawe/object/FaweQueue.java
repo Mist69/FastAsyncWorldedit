@@ -73,6 +73,7 @@ public interface FaweQueue extends HasFaweQueue, Extent {
     default BaseBlock getLazyBlock(int x, int y, int z) {
         int combinedId4Data = getCachedCombinedId4Data(x, y, z, 0);
         int id = FaweCache.getId(combinedId4Data);
+        System.out.println("FaweQueue 76 ID: " + id + " combinedId4Data: " + combinedId4Data);
         if (!FaweCache.hasNBT(id)) {
             return FaweCache.CACHE_BLOCK[combinedId4Data];
         }
@@ -151,12 +152,14 @@ public interface FaweQueue extends HasFaweQueue, Extent {
     default void optimize() {}
 
     default int setBlocks(CuboidRegion cuboid, final int id, final int data) {
+        System.out.println("FAWEQUEUE ID: " + id + ":" + data);//@TODO debug
         RegionWrapper current = new RegionWrapper(cuboid.getMinimumPoint(), cuboid.getMaximumPoint());
         final int minY = cuboid.getMinimumY();
         final int maxY = cuboid.getMaximumY();
 
         final FaweChunk<?> fc = getFaweChunk(0, 0);
         final byte dataByte = (byte) data;
+        System.out.println("FAWEQUEUE 161 ID: " + id + ":" + data);//@TODO debug
         fc.fillCuboid(0, 15, minY, maxY, 0, 15, id, dataByte);
         fc.optimize();
 
@@ -195,11 +198,13 @@ public interface FaweQueue extends HasFaweQueue, Extent {
     boolean setBlock(final int x, final int y, final int z, final int id, final int data);
 
     default boolean setBlock(int x, int y, int z, int id) {
+        System.out.println("FaweQueue 201 ID: " + id);
         return setBlock(x, y, z, id, 0);
     }
 
     default boolean setBlock(int x, int y, int z, int id, int data, CompoundTag nbt) {
         if (nbt != null) {
+            System.out.println("FaweQueue 206 ID: " + id);
             if (setBlock(x, y, z, id, data)) {
                 MainUtil.setPosition(nbt, x, y, z);
                 setTile(x, y, z, nbt);
@@ -207,6 +212,7 @@ public interface FaweQueue extends HasFaweQueue, Extent {
             }
             return false;
         } else {
+            System.out.println("FaweQueue 214 ID: " + id);
             return setBlock(x, y, z, id, data);
         }
     }

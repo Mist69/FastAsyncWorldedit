@@ -24,6 +24,7 @@ public class ChangeSetFaweQueue extends DelegateFaweQueue {
 
     @Override
     public boolean setBlock(int x, int y, int z, int id, int data) {
+        System.out.println("ChangeSetFaweQueue 27 ID: " + id);
         if (super.setBlock(x, y, z, id, data)) {
             int combinedFrom = getParent().getCombinedId4Data(x, y, z);
             if (FaweCache.hasNBT(combinedFrom >> 4)) {

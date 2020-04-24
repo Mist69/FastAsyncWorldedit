@@ -41,6 +41,7 @@ public class MutableBlockChange implements Change {
 
     public void create(UndoContext context) {
         if (queue != null) {
+            System.out.println("MutableBlockChange X: " + x + " y: " + y + " z: " + z + " ID: " + id + " DATA: " + data);
             queue.setBlock(x, y, z, id, data);
         }
         if (!checkedQueue) {
@@ -48,6 +49,7 @@ public class MutableBlockChange implements Change {
             Extent extent = context.getExtent();
             ExtentTraverser found = new ExtentTraverser(extent).find(HasFaweQueue.class);
             if (found != null) {
+                System.out.println("MutableBlockChange 52 ID: " + id);
                 (queue = ((HasFaweQueue) found.get()).getQueue()).setBlock(x, y, z, id, data);
             } else {
                 Fawe.debug("FAWE does not support: " + extent + " for " + getClass() + " (bug Empire92)");

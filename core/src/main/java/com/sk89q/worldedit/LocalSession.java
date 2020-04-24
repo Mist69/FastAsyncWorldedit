@@ -506,6 +506,7 @@ public class LocalSession implements TextureHolder {
         loadSessionHistoryFromDisk(player.getUniqueId(), fp.getWorldForEditing());
         if (getHistoryNegativeIndex() < history.size()) {
             FaweChangeSet changeSet = getChangeSet(history.get(getHistoryIndex()));
+
             EditSession newEditSession = new EditSessionBuilder(changeSet.getWorld())
                     .allowedRegionsEverywhere()
                     .checkMemory(false)

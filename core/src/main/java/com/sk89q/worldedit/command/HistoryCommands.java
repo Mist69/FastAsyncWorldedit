@@ -229,7 +229,7 @@ public class HistoryCommands extends MethodCommands {
             min = 0,
             max = 2
     )
-    @CommandPermissions("worldedit.history.undo")
+    @CommandPermissions("worldedit.history.undo")//TODO make undo work with clipboard to fix wrong undoing
     public void undo(Player player, LocalSession session, CommandContext context) throws WorldEditException {
         int times = Math.max(1, context.getInteger(0, 1));
         FawePlayer.wrap(player).checkConfirmation(() -> {

@@ -585,6 +585,7 @@ public class FaweAPI {
                     final int i = i2 + x;
                     final int xx = x_offset + x;
                     final short id = (short) (ids[i] & 0xFF);
+                    System.out.println("FaweAPI 588 ID: " + id);
                     queue.setBlock(xx, yy, zz, id, datas[i]);
                 }
             }

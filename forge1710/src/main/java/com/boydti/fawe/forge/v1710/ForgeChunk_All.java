@@ -10,6 +10,7 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.ListTag;
 import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +31,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import org.lwjgl.Sys;
 
 public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
 
@@ -54,10 +57,14 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
     public CharFaweChunk copy(boolean shallow) {
         ForgeChunk_All copy;
         if (shallow) {
+            System.out.println("Byte IDS 60: ");
+            System.out.println(byteIds);
             copy = new ForgeChunk_All(getParent(), getX(), getZ(), ids, count, air, heightMap, byteIds, datas, extended);
             copy.biomes = biomes;
             copy.chunk = chunk;
         } else {
+            System.out.println("Byte IDS 66: ");
+            System.out.println(byteIds);
             copy = new ForgeChunk_All(getParent(), getX(), getZ(), (char[][]) MainUtil.copyNd(ids), count.clone(), air.clone(), heightMap.clone(), (byte[][]) MainUtil.copyNd(byteIds), datas.clone(), extended.clone());
             copy.biomes = biomes;
             copy.chunk = chunk;
@@ -92,6 +99,9 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
 
     @Override
     public void setBlock(int x, int y, int z, int id, int data) {
+        if (id != 0) {
+            System.out.println("ID 0: " + id);
+        }
         int i = FaweCache.CACHE_I[y][z][x];
         int j = FaweCache.CACHE_J[y][z][x];
         byte[] vs = this.byteIds[i];
@@ -103,7 +113,7 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
             vs = this.byteIds[i] = new byte[4096];
         }
         this.count[i]++;
-        switch (id) {
+        switch (id) {//Switch statement for block ids that are getting set
             case 0:
                 this.air[i]++;
                 vs[j] = 0;
@@ -234,6 +244,7 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
             }
             // Run change task if applicable
             if (getParent().getChangeTask() != null) {
+                System.out.println("LINE 240 ");
                 CharFaweChunk previous = getParent().getPrevious(this, sections, tiles, entities, createdEntities, false);
                 getParent().getChangeTask().run(previous, this);
             }
@@ -251,6 +262,7 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
                 if (array == null) {
                     continue;
                 }
+                System.out.println("ID ARRAY: " + Arrays.toString(array));
                 int k = FaweCache.CACHE_J[ly][lz][lx];
                 if (array[k] != 0) {
                     synchronized (ForgeQueue_All.class) {
@@ -269,14 +281,19 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
                 if (newIdArray == null) {
                     continue;
                 }
-                int countAir = this.getAir(j);
+                int countAir = this.getAir(j);//The amount of air blocks being pasted
+                System.out.println("COUNT AIR: " + countAir);
+                System.out.println("COUNT: " + count);
+
                 NibbleArray newDataArray = this.getDataArray(j);
                 NibbleArray extendedArray = this.getExtendedIdArray(j);
                 ExtendedBlockStorage section = sections[j];
                 if ((section == null)) {
                     if (count == countAir) {
+                        System.out.println("Continue");
                         continue;
                     }
+                    System.out.println("Line 287");
                     sections[j] = section = new ExtendedBlockStorage(j << 4, !getParent().getWorld().provider.hasNoSky);
                     section.setBlockLSBArray(newIdArray);
                     if (newDataArray != null) {
@@ -288,93 +305,126 @@ public class ForgeChunk_All extends CharFaweChunk<Chunk, ForgeQueue_All> {
                     continue;
                 } else if (count >= 4096) {
                     if (count == countAir) {
+                        System.out.println("Line 301");
                         sections[j] = null;
                         continue;
                     }
                     section.setBlockLSBArray(newIdArray);
                     if (newDataArray != null) {
+                        System.out.println("Line 307");
                         section.setBlockMetadataArray(newDataArray);
                     } else if (section.getMetadataArray() != null) {
+                        System.out.println("Line 310");
                         Arrays.fill(section.getMetadataArray().data, (byte) 0);
                     }
                     if (extendedArray != null) {
+                        System.out.println("Line 314");
                         section.setBlockMSBArray(extendedArray);
                     } else if (section.getBlockMSBArray() != null) {
+                        System.out.println("Line 317");
                         Arrays.fill(section.getBlockMSBArray().data, (byte) 0);
                     }
                     continue;
                 }
+                //Default execute
+
                 byte[] currentIdArray = section.getBlockLSBArray();
                 NibbleArray currentDataArray = section.getMetadataArray();
                 NibbleArray currentExtraArray = section.getBlockMSBArray();
                 boolean data = currentDataArray != null && newDataArray != null;
                 if (currentDataArray == null && newDataArray != null) {
+                    System.out.println("Line 321");
                     section.setBlockMetadataArray(newDataArray);
                 }
                 boolean extra = currentExtraArray != null && extendedArray != null;
                 if (currentExtraArray == null && extendedArray != null) {
+                    System.out.println("Line 326");
                     section.setBlockMSBArray(extendedArray);
                 }
+
                 int solid = 0;
                 char[] charArray = this.getIdArray(j);
                 for (int k = 0; k < newIdArray.length; k++) {
                     char combined = charArray[k];
-                    switch (combined) {
+                    switch (combined) { //Get all blocks in radius
                         case 0:
+//                            System.out.println("Line 345");
                             if (currentIdArray[k] != 0) {
                                 solid++;
+                                System.out.println("Line 335");
                             }
                             continue;
                         case 1:
+                            System.out.println("Line 338");
                             currentIdArray[k] = 0;
-                            if (extra) {
+                            if (extra) {//extra @TODO disabling fixed setting the bugged block to air instead of random blocks
                                 int x = FaweCache.CACHE_X[0][k];
                                 int y = FaweCache.CACHE_Y[0][k];
                                 int z = FaweCache.CACHE_Z[0][k];
+                                System.out.println("Line 338 SET");
                                 currentExtraArray.set(x, y, z, 0);
                             }
-                            continue;
+                            //continue;
+                            //else {// Executes on air blocks
+//                                int x = FaweCache.CACHE_X[0][k];
+//                                int y = FaweCache.CACHE_Y[0][k];
+//                                int z = FaweCache.CACHE_Z[0][k];
+//                                System.out.println(currentExtraArray.get(x, y, z));
+                            //}
                         default:
                             solid++;
+                            System.out.println("ID: " + currentIdArray[k]);
                             currentIdArray[k] = newIdArray[k];
+                            System.out.println("ID 2: " + currentIdArray[k]);
                             if (data) {
-                                if (FaweCache.hasData(combined >> 4)) {
+                                if (FaweCache.hasData(combined >> 4)) { //CALLED WHEN BLOCKS HAS DATA (5:4)
+                                    System.out.println("Line 351");
                                     int dataByte = FaweCache.getData(combined);
                                     int x = FaweCache.CACHE_X[0][k];
                                     int y = FaweCache.CACHE_Y[0][k];
                                     int z = FaweCache.CACHE_Z[0][k];
                                     int newData = newDataArray.get(x, y, z);
+                                    System.out.println("Line 351 SET, NEWDATA: " + newData + " DATABYTE: " + dataByte);
                                     currentDataArray.set(x, y, z, newData);
                                 }
-                            } else if (currentDataArray != null) {
+                            } else if (currentDataArray != null) {//UNDO
+                                System.out.println("Line 360");
                                 int x = FaweCache.CACHE_X[0][k];
                                 int y = FaweCache.CACHE_Y[0][k];
                                 int z = FaweCache.CACHE_Z[0][k];
+                                System.out.println("Line 360 SET");
                                 currentDataArray.set(x, y, z, 0);
                             }
                             int extraId = FaweCache.getId(combined) >> 8;
-                            if (extra && extraId != 0) {
+                            if (extra) {//extraId != 0
+                                System.out.println("Line 368");
                                 int x = FaweCache.CACHE_X[0][k];
                                 int y = FaweCache.CACHE_Y[0][k];
                                 int z = FaweCache.CACHE_Z[0][k];
                                 int newExtra = extendedArray.get(x, y, z);
+                                System.out.println("EXTRA ID: " + extraId + " NEW EXTRA: " + newExtra);
+                                System.out.println("Line 368 SET");
                                 currentExtraArray.set(x, y, z, newExtra);
-                            } else if (currentExtraArray != null) {
+                            } else if (currentExtraArray != null) { //Called when executing undo
+                                System.out.println("Line 375");
                                 int x = FaweCache.CACHE_X[0][k];
                                 int y = FaweCache.CACHE_Y[0][k];
                                 int z = FaweCache.CACHE_Z[0][k];
+                                System.out.println("Line 375 SET");
+                                System.out.println("EXTRA ID: " + extraId);
                                 currentExtraArray.set(x, y, z, 0);
                             }
                             continue;
                     }
                 }
+
                 getParent().setCount(0, solid, section);
             }
 
             // Set biomes
             if (this.biomes != null) {
                 byte[] currentBiomes = nmsChunk.getBiomeArray();
-                for (int i = 0 ; i < this.biomes.length; i++) {
+                for (int i = 0; i < this.biomes.length; i++) {
                     byte biome = this.biomes[i];
                     if (biome != 0) {
                         if (biome == -1) biome = 0;

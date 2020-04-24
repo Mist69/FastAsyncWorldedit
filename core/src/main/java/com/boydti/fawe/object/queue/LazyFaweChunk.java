@@ -144,11 +144,13 @@ public abstract class LazyFaweChunk<T extends FaweChunk> extends FaweChunk {
 
     @Override
     public void setBlock(int x, int y, int z, int id) {
+        System.out.println("LazyFaweChunk ID: " + id);
         internalGetOrCacheChunk().setBlock(x, y, z, id);
     }
 
     @Override
     public void setBlock(int x, int y, int z, int id, int data) {
+        System.out.println("LazyFaweChunk 153 ID: " + id);
         internalGetOrCacheChunk().setBlock(x, y, z, id, data);
     }
 

@@ -426,8 +426,10 @@ public class FastWorldEditExtent extends AbstractDelegateExtent implements HasFa
             default: {
                 CompoundTag nbt = block.getNbtData();
                 if (nbt != null) {
+                    System.out.println("FastWorldEditExtent 229 ID: " + id);
                     return queue.setBlock(x, y, z, id, block.getData(), nbt);
                 } else {
+                    System.out.println("FastWorldEditExtent 232 ID: " + id);
                     return queue.setBlock(x, y, z, id, block.getData());
                 }
             }

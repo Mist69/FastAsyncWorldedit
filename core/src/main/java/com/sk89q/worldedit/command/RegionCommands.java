@@ -325,6 +325,7 @@ public class RegionCommands extends MethodCommands {
     public void set(FawePlayer player, LocalSession session, EditSession editSession, @Selection Region selection, Pattern to, CommandContext context) throws WorldEditException {
         player.checkConfirmationRegion(() -> {
             int affected;
+            System.out.println(to.toString());
             affected = editSession.setBlocks(selection, to);
             if (affected != 0) {
                 BBC.OPERATION.send(player, affected);

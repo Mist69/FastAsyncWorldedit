@@ -159,6 +159,7 @@ public abstract class MappedFaweQueue<WORLD, CHUNK, CHUNKSECTIONS, SECTION> impl
     public boolean setBlock(int x, int y, int z, int id, int data) {
         int cx = x >> 4;
         int cz = z >> 4;
+        System.out.println("MappedFaweQueue 162 ID: " + id);
         FaweChunk chunk = map.getFaweChunk(cx, cz);
         chunk.setBlock(x & 15, y, z & 15, id, data);
         return true;
@@ -166,6 +167,7 @@ public abstract class MappedFaweQueue<WORLD, CHUNK, CHUNKSECTIONS, SECTION> impl
 
     @Override
     public boolean setBlock(int x, int y, int z, int id) {
+        System.out.println("MappedFaweQueue 169 ID: " + id);
         int cx = x >> 4;
         int cz = z >> 4;
         FaweChunk chunk = map.getFaweChunk(cx, cz);

@@ -69,7 +69,7 @@ public class FaweForge implements IFawe {
 
     @Override
     public boolean isOnlineMode() {
-        return MinecraftServer.getServer().isServerInOnlineMode();
+        return true;
     }
 
     @Override

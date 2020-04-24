@@ -494,7 +494,7 @@ public class Fawe {
             ScriptingCommands.inject(); // Translations
             SelectionCommand.inject(); // Translations + set optimizations
             RegionCommands.inject(); // Translations
-            HistoryCommands.inject(); // Translations + rollback command
+//            HistoryCommands.inject(); // Translations + rollback command
             NavigationCommands.inject(); // Translations + thru fix
             ParametricBuilder.inject(); // Translations
             ParametricCallable.inject(); // Translations

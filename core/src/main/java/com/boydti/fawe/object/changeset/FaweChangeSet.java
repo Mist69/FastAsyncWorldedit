@@ -224,6 +224,7 @@ public abstract class FaweChangeSet implements ChangeSet {
             }
             int combinedFrom = (from.getId() << 4) + from.getData();
             int combinedTo = (to.getId() << 4) + to.getData();
+            System.out.println("ADDED TO CHANGE SET FROM ID: " + from.getId() + " TO ID: " + to.getId());//TODO debug
             add(x, y, z, combinedFrom, combinedTo);
 
         } catch (Exception e) {

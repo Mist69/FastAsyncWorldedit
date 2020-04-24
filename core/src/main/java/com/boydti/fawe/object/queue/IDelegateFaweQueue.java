@@ -121,6 +121,7 @@ public interface IDelegateFaweQueue extends FaweQueue {
 
     @Override
     default boolean setBlock(int x, int y, int z, int id, int data) {
+        System.out.println("IDelegateFaweQueue 124 ID: " + id);
         return getQueue().setBlock(x, y, z, id, data);
     }
 

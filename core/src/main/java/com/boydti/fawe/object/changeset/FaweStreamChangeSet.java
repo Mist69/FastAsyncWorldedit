@@ -100,15 +100,18 @@ public abstract class FaweStreamChangeSet extends FaweChangeSet {
 
                 @Override
                 public void readCombined(FaweInputStream is, MutableBlockChange change, boolean dir) throws IOException {
+                    System.out.println("FAWESTREAMCHANGE 103");
                     if (dir) {
                         is.skipFully(2);
                         int to1 = is.read();
                         int to2 = is.read();
                         change.id = (short) ((to2 << 4) + (to1 >> 4));
                         change.data = (byte) (to1 & 0xf);
+                        System.out.println("110 To 1: " + to1 + " to2: " + to2 + " id: " + change.id);
                     } else {
                         int from1 = is.read();
                         int from2 = is.read();
+                        System.out.println("114 To 1: " + from1 + " to2: " + from2 + " id: " + (from2 << 4) + (from1 >> 4));
                         is.skipFully(2);
                         change.id = (short) ((from2 << 4) + (from1 >> 4));
                         change.data = (byte) (from1 & 0xf);
@@ -117,6 +120,7 @@ public abstract class FaweStreamChangeSet extends FaweChangeSet {
 
                 @Override
                 public void readCombined(FaweInputStream is, MutableFullBlockChange change, boolean dir) throws IOException {
+                    System.out.println("FAWESTREAMCHANGE 121");
                     change.from = ((byte) is.read() & 0xFF) + ((byte) is.read() << 8);
                     change.to = ((byte) is.read() & 0xFF) + ((byte) is.read() << 8);
                 }
@@ -131,6 +135,7 @@ public abstract class FaweStreamChangeSet extends FaweChangeSet {
 
                 @Override
                 public void readCombined(FaweInputStream in, MutableBlockChange change, boolean dir) throws IOException {
+                    System.out.println("FAWESTREAMCHANGE 136");
                     int from1 = in.read();
                     int from2 = in.read();
                     change.id = (short) ((from2 << 4) + (from1 >> 4));
@@ -139,6 +144,7 @@ public abstract class FaweStreamChangeSet extends FaweChangeSet {
 
                 @Override
                 public void readCombined(FaweInputStream is, MutableFullBlockChange change, boolean dir) throws IOException {
+                    System.out.println("FAWESTREAMCHANGE 145");
                     change.from = ((byte) is.read() & 0xFF) + ((byte) is.read() << 8);
                     change.to = 0;
                 }

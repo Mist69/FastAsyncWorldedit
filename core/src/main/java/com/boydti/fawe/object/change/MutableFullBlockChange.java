@@ -78,6 +78,7 @@ public class MutableFullBlockChange implements Change {
                 }
             }
         }
+        System.out.println("MutableFullBlockChange ID: " + idFrom);
         queue.setBlock(x, y, z, idFrom, FaweCache.getData(from));
     }
 }

@@ -9,6 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
     }
 }
 
@@ -33,7 +34,7 @@ repositories {
     }
 }
 minecraft {
-    version = "10.13.4.1614-1.7.10"
+    version = "1.7.10-10.13.4.1558-1.7.10"
     runDir = 'run'
 }
 
